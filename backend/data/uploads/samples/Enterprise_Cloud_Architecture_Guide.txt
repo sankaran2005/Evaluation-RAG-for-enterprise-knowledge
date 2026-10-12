@@ -1,0 +1,17 @@
+# Enterprise Cloud Architecture & Resilience Guide v4.2
+
+## 1. High Availability & Kubernetes Configuration
+The enterprise production runtime operates on AWS Elastic Kubernetes Service (EKS) across three distinct availability zones:
+- Availability Zones: us-east-1a, us-east-1b, us-east-1c
+- Node Autoscaling: Dynamic horizontal autoscaling ranges from a baseline of 6 nodes up to 30 nodes during peak traffic.
+- Cluster Health Checks: Pod readiness and liveness probes run every 10 seconds. Ingress is governed by AWS Application Load Balancers with AWS WAF protection.
+
+## 2. Disaster Recovery Targets (RPO & RTO)
+Enterprise business continuity standards define strict disaster recovery metrics:
+- Recovery Point Objective (RPO): Strictly less than 15 minutes. Transaction logs and database write-ahead logs are mirrored to secondary regions asynchronously.
+- Recovery Time Objective (RTO): Strictly less than 60 minutes for all Tier-1 revenue-generating applications. Automated failover switches DNS records via Route 53 with 30-second TTL.
+
+## 3. Database Architecture & Compliance
+Primary operational databases utilize Amazon Aurora PostgreSQL Multi-AZ with automatic failover in under 30 seconds.
+For European Union compliance and GDPR data residency, European customer workloads are strictly partitioned in eu-west-1 (Ireland) with dedicated KMS encryption keys.
+Automated snapshot backups execute every 6 hours and are retained for 35 days with immutable Object Lock in Amazon S3.
